@@ -1,17 +1,17 @@
 import struct
 
 
-def decode_name(data, offset):
+def decode_name(dns_data, offset):
     labels = []
     jumped = False
     jump_offset = 0
 
     while True:
-        (length,) = struct.unpack_from("!B", data, offset)
+        (length,) = struct.unpack_from("!B", dns_data, offset)
         if length & 0xC0 == 0xC0:  # 检测到压缩指针
             if not jumped:
                 jump_offset = offset + 2
-            (pointer,) = struct.unpack_from("!H", data, offset)
+            (pointer,) = struct.unpack_from("!H", dns_data, offset)
             offset = pointer & 0x3FFF  # 获取指针指向的位置
             jumped = True
         elif length == 0:
@@ -19,7 +19,7 @@ def decode_name(data, offset):
             break
         else:
             offset += 1
-            labels.append(data[offset : offset + length].decode())
+            labels.append(dns_data[offset : offset + length].decode())
             offset += length
 
     if jumped:
@@ -28,10 +28,10 @@ def decode_name(data, offset):
         return ".".join(labels), offset
 
 
-def parse_dns_response(data):
+def parse_dns_response(dns_resp):
     # 解析DNS响应头部
     transaction_id, flags, questions, answer_rrs, authority_rrs, additional_rrs = (
-        struct.unpack(">HHHHHH", data[:12])
+        struct.unpack(">HHHHHH", dns_resp[:12])
     )
 
     print("Transaction ID:", transaction_id)
@@ -44,17 +44,17 @@ def parse_dns_response(data):
     offset = 12
     # 解析问题部分
     for _ in range(questions):
-        name, offset = decode_name(data, offset)
-        qtype, qclass = struct.unpack_from(">HH", data, offset)
+        name, offset = decode_name(dns_resp, offset)
+        qtype, qclass = struct.unpack_from(">HH", dns_resp, offset)
         offset += 4
         print(f"Question: {name}, Type: {qtype}, Class: {qclass}")
 
     # 解析应答部分
     for _ in range(answer_rrs):
-        name, offset = decode_name(data, offset)
-        rtype, rclass, ttl, rdlength = struct.unpack_from(">HHIH", data, offset)
+        name, offset = decode_name(dns_resp, offset)
+        rtype, rclass, ttl, rdlength = struct.unpack_from(">HHIH", dns_resp, offset)
         offset += 10
-        rdata = data[offset : offset + rdlength]
+        rdata = dns_resp[offset : offset + rdlength]
         offset += rdlength
 
         if rtype == 1:  # A记录
