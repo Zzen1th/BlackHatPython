@@ -71,4 +71,5 @@ if __name__ == "__main__":
     # 示例DNS响应包（十六进制字符串）
     hex_data = "abcd818000010001000000000377777706676f6f676c6503636f6d0000010001c00c00010001000000bc0004d8ef200a"
     data = bytes.fromhex(hex_data)
+    print(data)
     parse_dns_response(data)
