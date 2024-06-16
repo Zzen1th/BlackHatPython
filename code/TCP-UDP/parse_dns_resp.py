@@ -1,5 +1,8 @@
 import struct
 
+# dns报文分析
+# https://yangwang.hk/?p=878
+
 
 def decode_name(dns_data, offset):
     labels = []
@@ -29,7 +32,7 @@ def decode_name(dns_data, offset):
 
 
 def parse_dns_response(dns_resp):
-    # 解析DNS响应头部
+    # 解析DNS响应头部, header 固定12字节
     transaction_id, flags, questions, answer_rrs, authority_rrs, additional_rrs = (
         struct.unpack(">HHHHHH", dns_resp[:12])
     )
