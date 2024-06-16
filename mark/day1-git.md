@@ -19,3 +19,10 @@ git branch -d localBranchName
 
 // 删除远程分支
 git push origin --delete remoteBranchName
+
+ ## 问题：git远程管理
+ ### 更新
+ git pull https://github.com/xxx/xxx.git
+
+ ### 推送
+ git push origin main

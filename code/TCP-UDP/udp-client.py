@@ -10,7 +10,7 @@ client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
 client.sendto(
-    build_dnd_req.build_dns_query("www.qq.com"),
+    build_dnd_req.build_dns_query("www.cib.com.cn"),
     (target_host, target_port),
 )
 

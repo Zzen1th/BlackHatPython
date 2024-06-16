@@ -22,6 +22,9 @@ def build_dns_query(domain):
         authority_rrs,
         additional_rrs,
     )
+    # H 代表的意思是将数据打包为一个无符号短整型（unsigned short），其长度为2个字节（16位）。
+    # I：无符号整型，占用4个字节。
+    # B: 无符号字节，占用1个字节。
 
     # 构造Question部分
     qname = b""
