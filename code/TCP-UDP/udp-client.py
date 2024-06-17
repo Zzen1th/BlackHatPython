@@ -1,3 +1,5 @@
+# =-= coding: utf8 =-= #
+
 import socket
 import build_dnd_req
 import parse_dns_resp

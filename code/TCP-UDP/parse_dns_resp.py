@@ -1,3 +1,5 @@
+# =-= coding: utf8 =-= #
+
 import struct
 
 # dns报文分析
