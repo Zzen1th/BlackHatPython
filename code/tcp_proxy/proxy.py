@@ -1,13 +1,19 @@
+# =-= coding: utf8 =-= #
+
 import sys
 import socket
 import threading
+import time
 
 HEX_FILTER = "".join([(len(repr(chr(i))) == 3) and chr(i) or "." for i in range(256)])
 
 
 def hexdump(src, length=16, show=True):
     if isinstance(src, bytes):
-        src = src.decode()
+        try:
+            src = src.decode("utf-8")
+        except UnicodeDecodeError:
+            src = src.decode("iso-8859-1")
     results = list()
     for i in range(0, len(src), length):  # range(开始, 末尾, 步进)
         word = str(src[i : i + length])
@@ -30,15 +36,23 @@ def hexdump(src, length=16, show=True):
 # a = hexdump("Hello, Li!How are you\n?I often miss you!\x07")
 def receive_from(connection):
     buffer = b""
+    local_time = time.localtime(time.time())
+    now_time = f"{local_time.tm_year}/{local_time.tm_mon}/{local_time.tm_mday} {local_time.tm_hour}:{local_time.tm_min}:{local_time.tm_sec}"
+    print(f"[{now_time}] [*] Receiving...")
     connection.settimeout(5)
     try:
         while True:
-            data = connection.recv(4096)
+            data = connection.recv(1048)
             if not data:
                 break
             buffer += data
+        local_time = time.localtime(time.time())
+        now_time = f"{local_time.tm_year}/{local_time.tm_mon}/{local_time.tm_mday} {local_time.tm_hour}:{local_time.tm_min}:{local_time.tm_sec}"
+        print(f"[{now_time}] [*] Recevied!")
     except Exception as e:
-        pass
+        local_time = time.localtime(time.time())
+        now_time = f"{local_time.tm_year}/{local_time.tm_mon}/{local_time.tm_mday} {local_time.tm_hour}:{local_time.tm_min}:{local_time.tm_sec}"
+        print(f"[{now_time}] [!] Problem on connection: %r" % e)
     return buffer
 
 
@@ -98,7 +112,7 @@ def server_loop(local_host, local_port, remote_host, remote_port, recevie_first)
     try:
         server.bind((local_host, local_port))
     except Exception as e:
-        print("problem on bind: %r" % e)
+        print("[!] Problem on bind: %r" % e)
 
         print(f"[!] Failed to listen on {local_host}:{local_port}")
         print("[!] Check for other listening sockets or correct permissions")
