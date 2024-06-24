@@ -2,7 +2,7 @@
 
 
 def hello() -> None:
-    print("Hello Wrold!你好")
+    print("Hello Wrold!")
 
 
 if __name__ == "__main__":
