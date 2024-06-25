@@ -33,7 +33,6 @@ def hexdump(src, length=16, show=True):
         return results
 
 
-# a = hexdump("Hello, Li!How are you\n?I often miss you!\x07")
 def receive_from(connection):
     buffer = b""
     local_time = time.localtime(time.time())
@@ -42,7 +41,7 @@ def receive_from(connection):
     connection.settimeout(5)
     try:
         while True:
-            data = connection.recv(1048)
+            data = connection.recv(4096)
             if not data:
                 break
             buffer += data
